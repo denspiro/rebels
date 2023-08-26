@@ -1,0 +1,35 @@
+:host {
+  height: 100%;
+  display: flex;
+
+  > .cards {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    z-index: 1000;
+    overflow: auto;
+    min-width: 450px;
+    background-color: #F2EFE9;
+    box-shadow: -10px 0px 15px 0px #000000;;
+
+    > .message {
+      margin: 50% 0 0 20px;
+      font-size: 50px;
+      font-weight: 900;
+      line-height: 60px;
+    }
+  }
+
+  > .map-container {
+    flex: 4;
+
+    > .map-frame {
+      height: 100%;
+
+      > #map {
+        cursor: auto;
+        height: inherit;
+      }
+    }
+  }
+}

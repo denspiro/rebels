@@ -1,1 +1,25 @@
-/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;700&family=PT+Serif&family=Playfair+Display&display=swap');
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+h2 {
+  margin-bottom: 5px;
+}
+
+html {
+  height: 100%;
+  font-family: 'IBM Plex Sans', sans-serif;
+  color: #324A51;
+
+  > body {
+    margin: 0;
+    height: inherit;
+
+    > app-root {
+      height: inherit;
+    }
+  }
+}

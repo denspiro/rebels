@@ -1,0 +1,58 @@
+:host {
+  padding: 10px;
+  margin-bottom: 5px;
+  box-shadow: 0 1px 5px #00000030;
+  background-color: #F2EFE9;
+  position: relative;
+
+  p, h4 {
+    width: inherit;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+
+  > .closest {
+    position: absolute;
+    background-color: #008952;
+    color: #F2EFE9;
+    padding: 3px 15px;
+    border-radius: 30px 0 0 30px;
+    right: 0;
+  }
+
+  > .wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 25px 15px;
+
+    > .image-wrapper {
+      height: 100px;
+      width: 100px;
+      overflow: hidden;
+      border-radius: 50%;
+      margin-right: 15px;
+      background-color: #AAD3DF;
+
+      > .image {
+        width: 100px;
+      }
+    }
+
+    > .data {
+      flex: 1;
+      margin: 10px;
+      overflow: hidden;
+
+      > .coordinates {
+        margin-top: 10px;
+        > p {
+          > span {
+            font-size: 21px;
+            color: #008952;
+          }
+        }
+      }
+    }
+  }
+}
