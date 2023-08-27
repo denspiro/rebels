@@ -4,12 +4,7 @@ import { AlienData, Coordinates, AliensService } from '../aliens.service'
 
 const CLICKS_DELAY: number = 100
 
-interface CustomMarker extends Leaflet.Marker {
-  image: string
-  new (coordinates: number[], options: Object): CustomMarker
-}
-
-interface MarkerData extends Pick<CustomMarker, 'image'> {
+interface MarkerData {
   lat: number
   long: number
   image: string
@@ -31,7 +26,7 @@ export interface Alien extends AlienData {
 })
 export class MapComponent implements AfterViewInit, OnInit {
   private map!: Leaflet.Map
-  private _userMarker!: CustomMarker
+  private _userMarker!: Leaflet.Marker
   private _aliens!: Alien[]
 
   public get userCoordinates (): Pick<Coordinates, 'lat' | 'long'> | null {
@@ -94,7 +89,7 @@ export class MapComponent implements AfterViewInit, OnInit {
   }
 
   // Creating markers on the map and extending metadata with `rebelId`
-  private createMarker (marker: MarkerData): CustomMarker {
+  private createMarker (marker: MarkerData): Leaflet.Marker {
     const imageStyle: string = `
       width: ${marker.size}px;`
     const imageContainerStyle: string = `
@@ -112,8 +107,7 @@ export class MapComponent implements AfterViewInit, OnInit {
         <img src="${marker.image}" style="${imageStyle}"></img>
       </div>`
     })
-    const customMarker: CustomMarker = Leaflet.Marker.include({ rebelId: null })
-    return new customMarker([marker.lat, marker.long], { icon })
+    return new Leaflet.Marker([marker.lat, marker.long], { icon })
   }
 
   constructor (private readonly aliensService: AliensService) {}
