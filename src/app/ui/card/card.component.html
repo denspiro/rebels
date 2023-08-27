@@ -1,13 +1,13 @@
 <p *ngIf="isFirst" class="closest">Closest to you</p>
 <div class="wrapper">
   <div class="image-wrapper">
-    <img class="image" [src]="alien.image"/>
+    <img class="image" [src]="resource.image"/>
   </div>
   <div class="data">
-    <h2>{{alien.name}}</h2>
-    <p>{{alien.gender}} {{alien.species}}</p>
+    <h2>{{resource.name}}</h2>
+    <p>{{resource.gender}} {{resource.species}}</p>
     <div class="coordinates">
-      <p><span>{{Math.floor(alien.distanceToUser(userCoordinates))}}</span> kilometers away from you</p>
+      <p><span>{{Utils.distanceBetween(targetCoordinates, resource.coordinates)}}</span> kilometers away from you</p>
     </div>
   </div>
 </div>

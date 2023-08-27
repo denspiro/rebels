@@ -1,15 +1,17 @@
 import { Component, Input } from '@angular/core';
-import { Coordinates } from 'src/app/aliens.service';
-import { Alien } from 'src/app/map/map.component';
+import { Utils, Coordinates } from 'src/app/utils';
 
 @Component({
   selector: 'div[app-card]',
   templateUrl: './card.component.html',
   styleUrls: ['./card.component.scss']
 })
-export class CardComponent {
-  @Input() alien!: Alien
-  @Input() userCoordinates!: Pick<Coordinates, 'lat' | 'long'>
+export class CardComponent<T
+  extends { image: string, name: string, species: string, gender: string, coordinates: Coordinates }> {
+
+  @Input() resource!: T
+  @Input() targetCoordinates!: Coordinates
   @Input() isFirst!: boolean
-  public Math: typeof Math = Math
+
+  public Utils: typeof Utils = Utils;
 }
