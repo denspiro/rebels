@@ -2,11 +2,10 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http'
 import { Injectable } from '@angular/core'
 import { Observable, throwError } from 'rxjs'
 import { catchError, map, retry } from 'rxjs/operators'
+import { Coordinates } from './utils'
 
-export interface Coordinates {
+export interface AlienCoordinates extends Coordinates {
   id: number
-  lat: number
-  long: number
 }
 
 export interface AlienData {
@@ -63,7 +62,7 @@ export class AliensService {
 
   constructor (private readonly http: HttpClient) {}
 
-  public getCoordinates (): Observable<Coordinates[]> {
+  public getCoordinates (): Observable<AlienCoordinates[]> {
     return this.get<Message>(
       'https://aseevia.github.io/star-wars-frontend/data/secret.json'
     ).pipe(map(({ message }: Message) => JSON.parse(atob(message))))

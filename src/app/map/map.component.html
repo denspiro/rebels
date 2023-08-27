@@ -2,9 +2,9 @@
   <ng-container *ngIf="userCoordinates; else noUserCoordinates">
     <ng-container *ngFor="let alien of aliens; first as isFirst">
       <div app-card
-        [alien]="alien"
+        [resource]="alien"
         [isFirst]="isFirst"
-        [userCoordinates]="userCoordinates"></div>
+        [targetCoordinates]="userCoordinates"></div>
     </ng-container>
   </ng-container>
   <ng-template #noUserCoordinates>

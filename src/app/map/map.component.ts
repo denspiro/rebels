@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core'
 import * as Leaflet from 'leaflet'
-import { AlienData, Coordinates, AliensService } from '../aliens.service'
+import { AlienData, AlienCoordinates, AliensService } from '../aliens.service'
+import { Utils, Coordinates } from 'src/app/utils';
 
 const CLICKS_DELAY: number = 100
 
@@ -15,8 +16,6 @@ interface MarkerData {
 
 export interface Alien extends AlienData {
   coordinates: { lat: number, long: number }
-  distanceToUser: (userCoordinates: Pick<Coordinates, 'lat' | 'long'>) => number
-  distance: (lat1: number, lon1: number, lat2: number, lon2: number) => number
 }
 
 @Component({
@@ -29,7 +28,7 @@ export class MapComponent implements AfterViewInit, OnInit {
   private _userMarker!: Leaflet.Marker
   private _aliens!: Alien[]
 
-  public get userCoordinates (): Pick<Coordinates, 'lat' | 'long'> | null {
+  public get userCoordinates (): Coordinates | null {
     const coordinates: Leaflet.LatLng = this._userMarker?.getLatLng()
     return coordinates ? { lat: coordinates.lat, long: coordinates.lng } : null
   }
@@ -80,11 +79,10 @@ export class MapComponent implements AfterViewInit, OnInit {
       debounce = setTimeout(() =>
         // Sorting aliens according to their distance form the user
         this._aliens.sort((a: Alien, b: Alien) => {
-          const distanceA: number | null = a.distanceToUser({ lat: e.latlng.lat, long: e.latlng.lng })
-          const distanceB: number | null = b.distanceToUser({ lat: e.latlng.lat, long: e.latlng.lng })
+          const distanceA: number | null = Utils.distanceBetween(a.coordinates, { lat: e.latlng.lat, long: e.latlng.lng })
+          const distanceB: number | null = Utils.distanceBetween(b.coordinates, { lat: e.latlng.lat, long: e.latlng.lng })
           return distanceA && distanceB ? distanceA - distanceB : 0
-        }), CLICKS_DELAY
-      )
+        }), CLICKS_DELAY)
     })
   }
 
@@ -110,37 +108,20 @@ export class MapComponent implements AfterViewInit, OnInit {
     return new Leaflet.Marker([marker.lat, marker.long], { icon })
   }
 
-  constructor (private readonly aliensService: AliensService) {}
+  constructor(private readonly aliensService: AliensService) {}
 
-  private getAliens (rebelCoordinates: Coordinates[]) {
+  private getAliens (rebelCoordinates: AlienCoordinates[]) {
     this.aliensService.getData().subscribe((aliensData: AlienData[]) => {
-      // Combining `AlienData` with `Coordinates`, adding helper function to calulate distance to the user
-      // to make it more convinient working with one resource insted of two independent ones.
-      this._aliens = aliensData.filter((rebel: AlienData) => rebelCoordinates.some((coordinates: Coordinates) => coordinates.id === rebel.id))
+      // Combining `AlienData` with `Coordinates` to make it more convinient working
+      // with one resource insted of two independent ones.
+      this._aliens = aliensData.filter((rebel: AlienData) => rebelCoordinates
+        .some((coordinates: AlienCoordinates) => coordinates.id === rebel.id))
         .map((rebel: AlienData) => {
-          const rc: Coordinates = rebelCoordinates.find((coordinates: Coordinates) => coordinates.id === rebel.id) as Coordinates
+          const rc: AlienCoordinates = rebelCoordinates
+            .find((coordinates: AlienCoordinates) => coordinates.id === rebel.id) as AlienCoordinates
           return {
             ...rebel,
             coordinates: { lat: rc.lat, long: rc.long },
-            distanceToUser (userCoordinates: Pick<Coordinates, 'lat' | 'long'>) {
-            // Calculating distance in killometers between user point and rebel point
-              return this.distance(this.coordinates.lat, this.coordinates.long, userCoordinates.lat, userCoordinates.long)
-            },
-            distance (lat1: number, lon1: number, lat2: number, lon2: number) {
-              const earthRadius: number = 6371
-              function deg2rad (deg: number) {
-                return deg * (Math.PI / 180)
-              }
-              const dLat: number = deg2rad(lat2 - lat1)
-              const dLon: number = deg2rad(lon2 - lon1)
-              const a: number =
-              Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-              Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
-              Math.sin(dLon / 2) * Math.sin(dLon / 2)
-              const c: number = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
-              const distance: number = earthRadius * c // Distance in km
-              return distance
-            }
           }
         })
       this._aliens.forEach((r: Alien) => this.createMarker({
@@ -155,7 +136,7 @@ export class MapComponent implements AfterViewInit, OnInit {
   }
 
   public ngOnInit (): void {
-    this.aliensService.getCoordinates().subscribe((coordinates: Coordinates[]) => { this.getAliens(coordinates) })
+    this.aliensService.getCoordinates().subscribe((coordinates: AlienCoordinates[]) => { this.getAliens(coordinates) })
   }
 
   public ngAfterViewInit (): void {
