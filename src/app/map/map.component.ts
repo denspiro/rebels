@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core'
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core'
 import * as Leaflet from 'leaflet'
 import { AlienData, AlienCoordinates, AliensService } from '../aliens.service'
 import { Utils, Coordinates } from 'src/app/utils';
@@ -24,6 +24,8 @@ export interface Alien extends AlienData {
   styleUrls: ['./map.component.scss']
 })
 export class MapComponent implements AfterViewInit, OnInit {
+  @ViewChild('cards', { static: true }) cards!: ElementRef
+
   private map!: Leaflet.Map
   private _userMarker!: Leaflet.Marker
   private _aliens!: Alien[]
@@ -35,6 +37,11 @@ export class MapComponent implements AfterViewInit, OnInit {
 
   public get aliens (): Alien[] {
     return this._aliens
+  }
+
+  private _selectedAlien: number | null = null;
+  public get selectedAlien(): number | null {
+    return this._selectedAlien;
   }
 
   private initMap (): void {
@@ -71,18 +78,20 @@ export class MapComponent implements AfterViewInit, OnInit {
       }
       // Sets the view of the map (geographical center and zoom) with the given animation options.
       this.map.setView([e.latlng.lat, e.latlng.lng])
-
+      this._selectedAlien = null;
       // Small optimization for multiple repeated clicks.
       if (debounce) {
         clearTimeout(debounce)
       }
-      debounce = setTimeout(() =>
+      debounce = setTimeout(() => {
+        this.cards.nativeElement.scrollTo({ top: 0, left: 0, behavior: "smooth" })
         // Sorting aliens according to their distance form the user
         this._aliens.sort((a: Alien, b: Alien) => {
           const distanceA: number | null = Utils.distanceBetween(a.coordinates, { lat: e.latlng.lat, long: e.latlng.lng })
           const distanceB: number | null = Utils.distanceBetween(b.coordinates, { lat: e.latlng.lat, long: e.latlng.lng })
           return distanceA && distanceB ? distanceA - distanceB : 0
-        }), CLICKS_DELAY)
+        })
+      }, CLICKS_DELAY)
     })
   }
 
@@ -107,8 +116,6 @@ export class MapComponent implements AfterViewInit, OnInit {
     })
     return new Leaflet.Marker([marker.lat, marker.long], { icon })
   }
-
-  constructor(private readonly aliensService: AliensService) {}
 
   private getAliens (rebelCoordinates: AlienCoordinates[]) {
     this.aliensService.getData().subscribe((aliensData: AlienData[]) => {
@@ -135,6 +142,8 @@ export class MapComponent implements AfterViewInit, OnInit {
     })
   }
 
+  constructor(private readonly aliensService: AliensService) {}
+
   public ngOnInit (): void {
     this.aliensService.getCoordinates().subscribe((coordinates: AlienCoordinates[]) => { this.getAliens(coordinates) })
   }
@@ -142,5 +151,16 @@ export class MapComponent implements AfterViewInit, OnInit {
   public ngAfterViewInit (): void {
     // Initialazing the map only after DOM is ready, to have an element to attach the map to.
     this.initMap()
+  }
+
+  public focusAlien(alien: Alien): void {
+    this._selectedAlien = alien.id;
+    this.map.setView([alien.coordinates.lat, alien.coordinates.long], 10);
+  }
+
+  public focusUser(): void {
+    this._selectedAlien = null;
+    this.cards.nativeElement.scrollTo({ top: 0, left: 0, behavior: "smooth" })
+    this.map.setView([this.userCoordinates!.lat, this.userCoordinates!.long], 4);
   }
 }
