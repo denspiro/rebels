@@ -1,4 +1,9 @@
 :host {
+  &:hover {
+    background-color: #E5E1D9;
+    cursor: pointer;
+  }
+
   padding: 10px;
   margin-bottom: 5px;
   box-shadow: 0 1px 5px #00000030;
@@ -14,7 +19,7 @@
 
   > .closest {
     position: absolute;
-    background-color: #008952;
+    background-color: #00C5A4;
     color: #F2EFE9;
     padding: 3px 15px;
     border-radius: 30px 0 0 30px;
@@ -44,12 +49,12 @@
       margin: 10px;
       overflow: hidden;
 
-      > .coordinates {
+      > .distance {
         margin-top: 10px;
         > p {
           > span {
             font-size: 21px;
-            color: #008952;
+            color: #03b093;
           }
         }
       }

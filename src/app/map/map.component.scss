@@ -2,6 +2,37 @@
   height: 100%;
   display: flex;
 
+  > .focus-btn {
+    &:hover:not(:disabled) {
+      background-color: #0067CD;
+    }
+
+    &:active:not(:disabled) {
+      background-color: #00407F;
+    }
+
+    &:disabled {
+      opacity: 0.4;
+      cursor: auto;
+    }
+
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 2000;
+    height: 50px;
+    width: 50px;
+    border-radius: 100%;
+    background-color: #0080FF;
+    border: none;
+    cursor: pointer;
+    color: #F2EFE9;
+    font-size: 21px;
+    font-weight: 900;
+    margin: 20px;
+    box-shadow: 0px 2px 2px 0px #003B7C;
+  }
+
   > .cards {
     display: flex;
     flex-direction: column;
@@ -10,7 +41,11 @@
     overflow: auto;
     min-width: 450px;
     background-color: #F2EFE9;
-    box-shadow: -10px 0px 15px 0px #000000;;
+    box-shadow: -10px 0px 15px 0px #000000;
+
+    > .selected {
+      box-shadow: inset 10px 0px 0 #00C5A4;
+    }
 
     > .message {
       margin: 50% 0 0 20px;

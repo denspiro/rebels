@@ -1,10 +1,12 @@
-<div class="cards">
+<button class="focus-btn" [disabled]="!userCoordinates" (click)="focusUser()">ME</button>
+<div #cards class="cards">
   <ng-container *ngIf="userCoordinates; else noUserCoordinates">
     <ng-container *ngFor="let alien of aliens; first as isFirst">
-      <div app-card
+      <div app-card [class.selected]="alien.id === selectedAlien"
         [resource]="alien"
         [isFirst]="isFirst"
-        [targetCoordinates]="userCoordinates"></div>
+        [targetCoordinates]="userCoordinates"
+        (click)="focusAlien(alien)"></div>
     </ng-container>
   </ng-container>
   <ng-template #noUserCoordinates>
