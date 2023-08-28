@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { Alien } from 'src/app/map/map.component';
 import { Utils, Coordinates } from 'src/app/utils';
 
 @Component({
@@ -6,10 +7,9 @@ import { Utils, Coordinates } from 'src/app/utils';
   templateUrl: './card.component.html',
   styleUrls: ['./card.component.scss']
 })
-export class CardComponent<T
-  extends { image: string, name: string, species: string, gender: string, coordinates: Coordinates }> {
+export class CardComponent {
 
-  @Input() resource!: T
+  @Input() resource!: Alien
   @Input() targetCoordinates!: Coordinates
   @Input() isFirst!: boolean
 
