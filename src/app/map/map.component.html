@@ -1,6 +1,7 @@
 <button class="focus-btn" [disabled]="!userCoordinates" (click)="focusUser()">ME</button>
-<div #cards class="cards">
+<div #cards class="cards" [class.user-coordinates]="userCoordinates">
   <ng-container *ngIf="userCoordinates; else noUserCoordinates">
+    <div class="drag-indicator"><h3>PULL</h3></div>
     <ng-container *ngFor="let alien of aliens; first as isFirst">
       <div app-card [class.selected]="alien.id === selectedAlien"
         [resource]="alien"
@@ -9,12 +10,12 @@
         (click)="focusAlien(alien)"></div>
     </ng-container>
   </ng-container>
-  <ng-template #noUserCoordinates>
-    <p class="message">Please click on a map to see your distance from aliens</p>
-  </ng-template>
 </div>
 <div class="map-container">
   <div class="map-frame">
     <div id="map"></div>
   </div>
 </div>
+<ng-template #noUserCoordinates>
+  <p class="message">Please click on a map to see your distance from aliens</p>
+</ng-template>
